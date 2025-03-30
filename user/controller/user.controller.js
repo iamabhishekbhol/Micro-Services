@@ -26,8 +26,9 @@ module.exports.register = async (req, res) => {
     });
     // Set token in cookie
     res.cookie("token", token);
+    delete user._doc.password; // Remove password from user object
     // Send response
-    res.send({ message: "User created successfully", user });
+    res.status(201).send({ token, message: "User created successfully", user });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
@@ -51,10 +52,11 @@ module.exports.login = async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
+    delete user._doc.password; // Remove password from user object; // Remove password from user object
     // Set token in cookie
     res.cookie("token", token);
     // Send response
-    res.send({ message: "User logged in successfully", user });
+    res.send({ token, message: "User logged in successfully", user });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
@@ -63,12 +65,12 @@ module.exports.login = async (req, res) => {
 
 module.exports.logout = async (req, res) => {
   try {
-    const token = req.cookies.token;
+    const token = req.cookies.token || req.headers["authorization"];
     await blacklistTokenModel.create({ token });
     // Clear the cookie
     res.clearCookie("token");
     // Send response
-    res.send({ message: "User logged out successfully" });
+    res.status(200).send({ message: "User logged out successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
@@ -84,4 +86,4 @@ module.exports.profile = async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
-}
+};

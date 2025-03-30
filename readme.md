@@ -5,3 +5,4 @@ bcrypt
 jwt (jsonwebtoken)
 dotenv
 cookie-parser
+express-http-proxy
