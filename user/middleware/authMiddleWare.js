@@ -4,8 +4,6 @@ const blacklistTokenModel = require("../models/blacklisttoken.model");
 
 module.exports.userAuth = async (req, res, next) => {
   try {
-    console.log("value of authorization:", req.headers.authorization);
-
     // Extract token from cookies or Authorization header
     const token = req.cookies.token || req.headers.authorization;
 
